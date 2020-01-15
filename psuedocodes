@@ -1,0 +1,52 @@
+How would I like to use the lp_generate?
+
+1. I tell the Lpgen how many veriables are involved:
+    lp = Lpgen(varcounts = 3)
+    ** Our class is using double indexing from time to time, so at the constructor, I will need to specify
+       whether I would use double indexing or single
+       lp = Lpgen(varcounts=9, indexing="d")
+
+
+2. I tell the lpgen, one constraints at a time, and add it to it.
+    lp.add_constraint(coefficients=?, operator={<=, >=, =}, rhs=5)
+
+3. I tell the lpgen what type of variables we are looking at:
+    * I specify types for all variables at once:
+        lp.specify_vartype("sec")
+    * I specify types for all variables one by one?
+        lp.secpfiy_vartype([sec, sec, bin, free.....])
+        ** So I just specify an array, types in the array, matching with the variable at the same index.
+
+4. Get the text representing the Lp:
+    lp.produce()
+    * This will make the lp return a text representing the problem you want to put into the IDE lp_solver.
+
+From all the descriptions above, we have the following specs:
+
+__init__():
+* param: varcounts
+    define the number of variables.
+* indexing: d, s where d: double, s means single
+    ** if the client chooses to use double indexing, then the code will expect the inputs for all the coefficients to
+    be a double array.
+    ** if s, then the client should give a single array representing the coefficients for the constranints.
+    the same format for the variables types.
+
+add_constraints()
+* param: coeffients
+    ** depedning on the indexing mode, it's either going to be 2d array, or it's going to be a array.
+
+* param: operators
+    ** It's one of the 'geq', 'leq', 'eq' representing >=, <=, = (There might be more for the future, but this is for now)
+
+* param: rhs
+    ** The value that is at the right hand side of the inequality
+
+specify_vartype():
+* param: vartypes:
+    ** it's either on value, or array depending on the indexing mode. In side the array, it's the type for the variables
+    types of the variables are: free, int, sec, bin, as string representing the value of the type of variables.
+
+
+produce():
+* This function is going to return a string, which is going to be the text input for the lpsolve IDE.
