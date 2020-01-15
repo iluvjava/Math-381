@@ -6,7 +6,7 @@ This file is dedicated to creating LP solve text for the Lpsolve IDE.
 The codes needs python 3.6 or higher.
 """
 
-__all__ = ["Problem"]
+__all__ = ["ChromaticNumberProblem"]
 
 from typing import List, Union, Dict
 import math as m
@@ -28,18 +28,19 @@ class ChromaticNumberProblem:
             [x_12_1, x_12, 2, ... x_12_12]
         ]
     """
-    def __init__(self):
-        def var_matrix(N=12):
+    def __init__(self, N=12 ,Var_Matrix=None, Adj_Matrix=None):
+        def var_matrix():
             mtx = [[f"y{I + 1}" for I in range(N)]]
             mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
             return mtx
-        def adj_matrix(N=12):
+        var_matrix = var_matrix if Var_Matrix is None else Var_Matrix
+        def adj_matrix():
             return [[1 if bool(I != J and m.cos(I) + m.cos(J) > 0) else 0 for J in range(N)] for I in range(N)]
+        adj_matrix = adj_matrix if Adj_Matrix is None else Adj_Matrix
         self.__AdjMatrix = adj_matrix()
         self.__VarMatrix = var_matrix()
-        self.__N = 12
+        self.__N = N
         pass
-
     def __edge(self, I, J):
         """
         :return:
@@ -55,16 +56,12 @@ class ChromaticNumberProblem:
         A list of constraints.
         A constraints is in the following formats:
         {"coeff": ???, "opt": ???, "rhs":??}
-        coeff:
-            A map with tuple, tuple maps to a value which is the coefficients of the variables.
         """
         constraints = []
+        opt = "<="
+        rhs = 1
         for I in range(1, self.__N + 1):
-            coeff = dict()
-            for J in range(self.__N):
-                coeff[(I, J)] = 1
-            opt = "<="
-            rhs = 1
+            coeff = [(I, J, 1) for J in range(self.__N)]
             constraints.append({"coeff": coeff, "opt": opt, "rhs": rhs})
         return constraints
 
@@ -80,14 +77,12 @@ class ChromaticNumberProblem:
             A list of constraints in the usual format.
         """
         constraints = []
+        rhs = 0
+        opt = "<="
         for I in range(self.__N):
             for J in range(self.__N):
-                coeff = dict()
-                coeff[(I + 1, J)] = 1
-                coeff[(0, J)] = -1
-                rhs = 0
-                opt = "<="
-                constraints.append({"coef": coeff, "opt": opt, "rhs": rhs})
+                coeff = [(I + 1, J, 1), (0, J, -1)]
+                constraints.append({"coeff": coeff, "opt": opt, "rhs": rhs})
         return constraints
 
     def no_sharing_color(self):
@@ -97,47 +92,63 @@ class ChromaticNumberProblem:
         :return:
         """
         constraints = []
+        rhs = 1
+        opt = "<="
         for I in range(1, self.__N + 1):
-            for J in range(I, self.__N):
+            for J in range(I + 1, self.__N):# vertex No looping back on itself.
                 if self.__edge(I - 1, J):
                     for K in range(self.__N): # for all the color
-                        coeff = dict()
-                        rhs = 1
-                        opt = "<="
-                        coeff[(I, K)] = 1
-                        coeff[(J, K)] = 1
+                        coeff = [(I, K, 1), (J, K, 1)]
                         constraints.append({"coeff": coeff, "rhs": rhs, "opt": opt})
-                    pass
-                pass
         return constraints
 
     def color_in_sequence(self):
         """
             * Generating a list of constraints representing that the color should be used in sequence.
+            y_{i + 1}-y_{i}>=0
+            which is basically:
+            y1<=y2<=y3...<y12
         :return:
         """
+        constraints = []
+        opt = "<="
+        rhs = 0
+        for J in range(1, self.__N):
+            coeff = [(0, J, 1), (0, J - 1, -1)]
+            constraints.append({"coeff": coeff, "opt": opt, "rhs": rhs})
+        return constraints
 
+    def format_objective_fxn(self):
+        """
+        :return:
+            A string that is the objective function for the LP problem.
+        """
         pass
 
-    def format_consraint(self, constraint):
+    def format_variable_type(self):
+        """
+        :return:
+            A string that defines the variable types for the Lp problem.
+        """
+        pass
+
+    def format_constraint(self, constraint):
         """
         This function takes the constraints and use the variable matrix to produce one instance of the constraint
         inequality.
         :param constraint:
             a map in the format of: {"coeff": ???, "opt": ???, "rhs":??}
         :return:
-            A string that represents the inequality.
+            A string that one line of inequality for the ststen.
         """
-        tail = constraint["opt"] + str(constraint["rhs"])
+        tail = constraint["opt"] + str(constraint["rhs"]) + ';'
         output = ""
         coeff = constraint["coeff"]
-        for I in range(self.__N + 1):
-            for J in range(self.__N):
-                v = self.__VarMatrix[I][J]
-                if (I, J) in coeff.keys():
-                    c = coeff[(I, J)]
-                    output += f"{'+' if c > 0 else ''}{'' if c == 1 else (c + '*')}{v}"
+        for I, J, c in coeff:
+            v = self.__VarMatrix[I][J]
+            output += f"{'+' if c > 0 else ''}{'' if c == 1 else ('-' if c == -1 else str(c) + '*')}{v}"
         return (output if output[0] is not "+" else output[1:]) + tail
+
 
 
 if __name__ == "__main__":
@@ -145,11 +156,39 @@ if __name__ == "__main__":
     uni_Color_Constraint = p.uni_color()
     print("This is the uni color consraint for the hw problem: ")
     print(uni_Color_Constraint)
-    print(p.format_consraint(uni_Color_Constraint[0]))
+    print(p.format_constraint(uni_Color_Constraint[0]))
 
     print("Printing out all of the unique coloring constraints for the system: ")
     for I in p.uni_color():
-        print(p.format_consraint(I))
+        print(p.format_constraint(I))
+    print("Print out: Only use valid color constraints: ")
+    for I in p.only_use_valid_color():
+        print(p.format_constraint(I))
+
+    print("Print out: adjacent vertext doesn't share color constraints:")
+    for I in p.no_sharing_color():
+        print(p.format_constraint(I))
+    ###################################################################################################################
+    print("Experimenting with the 3 vertice full graph. ")
+    def Adj_Matrix():
+        return [[1 for I in range(3)] for J in range(3)]
+    def Var_Matrix(N=3):
+        mtx = [[f"y{I + 1}" for I in range(N)]]
+        mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
+        return mtx
+    p = ChromaticNumberProblem(N=3, Adj_Matrix=Adj_Matrix, Var_Matrix = Var_Matrix)
+    print("Here are the no sharing color constraints: ")
+    for c in p.no_sharing_color():
+        print(p.format_constraint(c))
+    print("Here is the: Only use valid color constraints: ")
+    for c in p.only_use_valid_color():
+        print(p.format_constraint(c))
+    print("Here is the uni color constraints: ")
+    for c in p.uni_color():
+        print(p.format_constraint(c))
+    print("Here is color in sequence constraints: ")
+    for c in p.color_in_sequence():
+        print(p.format_constraint(c))
     pass
 
 
