@@ -58,7 +58,7 @@ class ChromaticNumberProblem:
         {"coeff": ???, "opt": ???, "rhs":??}
         """
         constraints = []
-        opt = "<="
+        opt = "="
         rhs = 1
         for I in range(1, self.__N + 1):
             coeff = [(I, J, 1) for J in range(self.__N)]
@@ -94,11 +94,12 @@ class ChromaticNumberProblem:
         constraints = []
         rhs = 1
         opt = "<="
-        for I in range(1, self.__N + 1):
-            for J in range(I + 1, self.__N):# vertex No looping back on itself.
-                if self.__edge(I - 1, J):
+        for I in range(self.__N):
+            for J in range(I + 1, self.__N):  # vertex No looping back on itself.
+                # print(f"{(I, J)} n = {self.__N}")
+                if self.__edge(I, J):
                     for K in range(self.__N): # for all the color
-                        coeff = [(I, K, 1), (J, K, 1)]
+                        coeff = [(I + 1, K, 1), (J + 1, K, 1)]
                         constraints.append({"coeff": coeff, "rhs": rhs, "opt": opt})
         return constraints
 
@@ -123,14 +124,18 @@ class ChromaticNumberProblem:
         :return:
             A string that is the objective function for the LP problem.
         """
-        pass
+        return "min: " + "+".join([f"y{I + 1}" for I in range(self.__N)]) + ";"
 
     def format_variable_type(self):
         """
+            For the hw problem, we want all variables involved to be a binary variable.
         :return:
             A string that defines the variable types for the Lp problem.
         """
-        pass
+        head = "bin "
+        tail = ";"
+        return head + ",".join(J for I in self.__VarMatrix for J in I) + tail
+
 
     def format_constraint(self, constraint):
         """
@@ -149,46 +154,124 @@ class ChromaticNumberProblem:
             output += f"{'+' if c > 0 else ''}{'' if c == 1 else ('-' if c == -1 else str(c) + '*')}{v}"
         return (output if output[0] is not "+" else output[1:]) + tail
 
+    def produce_lp(self):
+        """
+        * The obj fxn
+        * the uni color constraints
+        * The only use valid color constraint.
+        * the no adj vertex sharing color constraint
+        * the color in sequence constraint.
+        * the variable type constraint.
+        :return:
+        A string that is all the stuff need to solve that lp in the lpsolve ide.
+        """
+        result = self.format_objective_fxn() + "\n";
 
 
-if __name__ == "__main__":
-    p = ChromaticNumberProblem()
-    uni_Color_Constraint = p.uni_color()
-    print("This is the uni color consraint for the hw problem: ")
-    print(uni_Color_Constraint)
-    print(p.format_constraint(uni_Color_Constraint[0]))
+        result += "/*Here is all the constraints that make all the vertex uses one color at a time: */\n"
+        uni_Color_Constraints = self.uni_color()
+        for constraint in uni_Color_Constraints:
+            result += self.format_constraint(constraint) + "\n"
+        result += f"/*For the unique color constraints, we have {len(uni_Color_Constraints)} of them.*/\n"
 
-    print("Printing out all of the unique coloring constraints for the system: ")
-    for I in p.uni_color():
-        print(p.format_constraint(I))
-    print("Print out: Only use valid color constraints: ")
-    for I in p.only_use_valid_color():
-        print(p.format_constraint(I))
 
-    print("Print out: adjacent vertext doesn't share color constraints:")
-    for I in p.no_sharing_color():
-        print(p.format_constraint(I))
-    ###################################################################################################################
-    print("Experimenting with the 3 vertice full graph. ")
-    def Adj_Matrix():
-        return [[1 for I in range(3)] for J in range(3)]
-    def Var_Matrix(N=3):
+        result += "/*Here is all the constraints that make each vertex only uses valid color: */\n"
+        valid_Color_Constraints = self.only_use_valid_color()
+        for constraint in valid_Color_Constraints:
+            result += self.format_constraint(constraint) + "\n"
+        result += f"/*Constraint counts: {len(valid_Color_Constraints)}*/\n"
+
+        result += "/*No adj vertex share color consraints: */\n"
+        adj_Sharing = self.no_sharing_color()
+        for constraint in adj_Sharing:
+            result += self.format_constraint(constraint) + "\n"
+        result += f"/*Constraints count: {len(adj_Sharing)}*/\n"
+
+        result += "/*Here is all the color in sequence constraint*/\n"
+        color_Sequence = self.color_in_sequence()
+        for constraint in color_Sequence:
+            result += self.format_constraint(constraint) + "\n"
+        result += f"/*constraint count: {len(color_Sequence)}*/\n"
+
+        result += self.format_variable_type()
+
+        return result + "\n/*That is the end of the lp problem*/"
+
+def generate_problem():
+    """
+    4 points square problem
+    :return:
+    The string for the lpsolver input.
+    """
+    def adj_M():
+        return [[0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], [1, 0, 0, 0]]
+
+    def var_matrix(N=4):
         mtx = [[f"y{I + 1}" for I in range(N)]]
         mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
         return mtx
-    p = ChromaticNumberProblem(N=3, Adj_Matrix=Adj_Matrix, Var_Matrix = Var_Matrix)
-    print("Here are the no sharing color constraints: ")
-    for c in p.no_sharing_color():
-        print(p.format_constraint(c))
-    print("Here is the: Only use valid color constraints: ")
-    for c in p.only_use_valid_color():
-        print(p.format_constraint(c))
-    print("Here is the uni color constraints: ")
-    for c in p.uni_color():
-        print(p.format_constraint(c))
-    print("Here is color in sequence constraints: ")
-    for c in p.color_in_sequence():
-        print(p.format_constraint(c))
+    p = ChromaticNumberProblem(N=4, Adj_Matrix= adj_M, Var_Matrix=var_matrix)
+    print(p.produce_lp())
+    pass
+
+def generate_HWproblem():
+    p = ChromaticNumberProblem()
+    res = p.produce_lp()
+    print(res)
+    return res
+
+if __name__ == "__main__":
+    # p = ChromaticNumberProblem()
+    # uni_Color_Constraint = p.uni_color()
+    # print("This is the uni color consraint for the hw problem: ")
+    # print(uni_Color_Constraint)
+    # print(p.format_constraint(uni_Color_Constraint[0]))
+    #
+    # print("Printing out all of the unique coloring constraints for the system: ")
+    # for I in p.uni_color():
+    #     print(p.format_constraint(I))
+    # print("Print out: Only use valid color constraints: ")
+    # for I in p.only_use_valid_color():
+    #     print(p.format_constraint(I))
+    #
+    # print("Print out: adjacent vertext doesn't share color constraints:")
+    # for I in p.no_sharing_color():
+    #     print(p.format_constraint(I))
+    # ###################################################################################################################
+    # print("Experimenting with the 3 vertice full graph. ")
+    # def Adj_Matrix():
+    #     return [[1]*3 for I in range(3)]
+    #
+    # def Var_Matrix(N=3):
+    #     mtx = [[f"y{I + 1}" for I in range(N)]]
+    #     mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
+    #     return mtx
+    # p = ChromaticNumberProblem(N=3, Adj_Matrix=Adj_Matrix, Var_Matrix = Var_Matrix)
+    # print("Here are the no sharing color constraints: ")
+    # for c in p.no_sharing_color():
+    #     print(p.format_constraint(c))
+    # print("Here is the: Only use valid color constraints: ")
+    # for c in p.only_use_valid_color():
+    #     print(p.format_constraint(c))
+    # print("Here is the uni color constraints: ")
+    # for c in p.uni_color():
+    #     print(p.format_constraint(c))
+    # print("Here is color in sequence constraints: ")
+    # for c in p.color_in_sequence():
+    #     print(p.format_constraint(c))
+    # print("Here is the objective function formatted: ")
+    # print(p.format_objective_fxn())
+    # print("Variable type for the 3v chromatic: ")
+    # print(p.format_variable_type())
+    #
+    # print("Looking good, let's see what lp text it makes: ")
+    # print(p.produce_lp())
+    # #################################################################################################################
+    # generate_problem()
+    res = generate_HWproblem()
+    with open("lp.txt", "w+") as f:
+        f.write(res)
+
     pass
 
 
