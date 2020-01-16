@@ -8,19 +8,14 @@ The codes needs python 3.6 or higher.
 
 __all__ = ["ChromaticNumberProblem"]
 
-from typing import List, Union, Dict
+from typing import Union, List, Tuple
 import math as m
 Number = Union[int, float]
-MyCoefficients = Dict[int, Number]
-T1 = Union[List[str], List[List[str]], str]
 
 
 class ChromaticNumberProblem:
     """
-    The problem store the matrix in a 13 x 12 2d array, first row is dedicated to all
-
-    For this problem, we have 144 variables for the x, and we will make a 13 by 12 matrix to
-    store all the variables in the following format:
+        This is a class that is desinged to solve the chromatic number problem for any given graph.
         [
             [y1, y2, y3,... y12],
             [x_1_1, x_1_2, ... x_1_12],
@@ -29,13 +24,23 @@ class ChromaticNumberProblem:
         ]
     """
     def __init__(self, N=12 ,Var_Matrix=None, Adj_Matrix=None):
+        """
+        :param N:
+            The number of vertex involved, by default.
+        :param Var_Matrix:
+            A function that returns the variable matrix.
+            By default it's None and it will be replaced by the var_matrix of the homework problem.
+        :param Adj_Matrix:
+            A function that returns the adjacency matrix of the graph.
+            By default it's None and it wil be replaced by the adj_matrix function of the homework problem.
+        """
         def var_matrix():
             mtx = [[f"y{I + 1}" for I in range(N)]]
             mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
             return mtx
         var_matrix = var_matrix if Var_Matrix is None else Var_Matrix
         def adj_matrix():
-            return [[1 if bool(I != J and m.cos(I) + m.cos(J) > 0) else 0 for J in range(N)] for I in range(N)]
+            return [[1 if bool(I != J and m.cos(I + 1) + m.cos(J + 1) > 0) else 0 for J in range(N)] for I in range(N)]
         adj_matrix = adj_matrix if Adj_Matrix is None else Adj_Matrix
         self.__AdjMatrix = adj_matrix()
         self.__VarMatrix = var_matrix()
@@ -56,6 +61,9 @@ class ChromaticNumberProblem:
         A list of constraints.
         A constraints is in the following formats:
         {"coeff": ???, "opt": ???, "rhs":??}
+        the coefficient is a list of tuples in the format of (I, J, K)
+        where the first 2 numbers are the double index for accessing the variable name
+        and the third number is the coefficient of that variable.
         """
         constraints = []
         opt = "="
@@ -68,13 +76,11 @@ class ChromaticNumberProblem:
     def only_use_valid_color(self):
         """
             Create a list of constraints.
-
             if a color is zero, then non of the vertex should be using that color:
-
             * for all I, J: x_I_J - y_J <= 0
             * There should be 144 constrains in total
         :return:
-            A list of constraints in the usual format.
+            A list of constraints.
         """
         constraints = []
         rhs = 0
@@ -90,6 +96,7 @@ class ChromaticNumberProblem:
         This function creates the constraints representing the following conditions from the problem:
             * None of the adjacent vertex shares the same color:
         :return:
+            A list of constraints.
         """
         constraints = []
         rhs = 1
@@ -110,6 +117,7 @@ class ChromaticNumberProblem:
             which is basically:
             y1<=y2<=y3...<y12
         :return:
+            A list of constraints
         """
         constraints = []
         opt = "<="
@@ -136,8 +144,7 @@ class ChromaticNumberProblem:
         tail = ";"
         return head + ",".join(J for I in self.__VarMatrix for J in I) + tail
 
-
-    def format_constraint(self, constraint):
+    def format_constraint(self, constraint: List[Tuple]):
         """
         This function takes the constraints and use the variable matrix to produce one instance of the constraint
         inequality.
@@ -156,6 +163,7 @@ class ChromaticNumberProblem:
 
     def produce_lp(self):
         """
+        It produce the constraints for the LP in the following order:
         * The obj fxn
         * the uni color constraints
         * The only use valid color constraint.
@@ -167,13 +175,11 @@ class ChromaticNumberProblem:
         """
         result = self.format_objective_fxn() + "\n";
 
-
         result += "/*Here is all the constraints that make all the vertex uses one color at a time: */\n"
         uni_Color_Constraints = self.uni_color()
         for constraint in uni_Color_Constraints:
             result += self.format_constraint(constraint) + "\n"
         result += f"/*For the unique color constraints, we have {len(uni_Color_Constraints)} of them.*/\n"
-
 
         result += "/*Here is all the constraints that make each vertex only uses valid color: */\n"
         valid_Color_Constraints = self.only_use_valid_color()
@@ -197,6 +203,10 @@ class ChromaticNumberProblem:
 
         return result + "\n/*That is the end of the lp problem*/"
 
+    def get_adj_matrix(self):
+        return self.__AdjMatrix
+
+
 def generate_problem():
     """
     4 points square problem
@@ -214,64 +224,25 @@ def generate_problem():
     print(p.produce_lp())
     pass
 
+
 def generate_HWproblem():
+    """
+    function generate the hw problem using the adjacency matrix for the hw.
+    :return:
+        The string, which is the text for the lp_solve.
+    """
     p = ChromaticNumberProblem()
     res = p.produce_lp()
     print(res)
+    print("This is the adjacency matrix: ")
+    for row in p.get_adj_matrix():
+        print(str(row)[1:-1])
     return res
 
 if __name__ == "__main__":
-    # p = ChromaticNumberProblem()
-    # uni_Color_Constraint = p.uni_color()
-    # print("This is the uni color consraint for the hw problem: ")
-    # print(uni_Color_Constraint)
-    # print(p.format_constraint(uni_Color_Constraint[0]))
-    #
-    # print("Printing out all of the unique coloring constraints for the system: ")
-    # for I in p.uni_color():
-    #     print(p.format_constraint(I))
-    # print("Print out: Only use valid color constraints: ")
-    # for I in p.only_use_valid_color():
-    #     print(p.format_constraint(I))
-    #
-    # print("Print out: adjacent vertext doesn't share color constraints:")
-    # for I in p.no_sharing_color():
-    #     print(p.format_constraint(I))
-    # ###################################################################################################################
-    # print("Experimenting with the 3 vertice full graph. ")
-    # def Adj_Matrix():
-    #     return [[1]*3 for I in range(3)]
-    #
-    # def Var_Matrix(N=3):
-    #     mtx = [[f"y{I + 1}" for I in range(N)]]
-    #     mtx += [[f"x_{J + 1}_{I + 1}" for I in range(N)] for J in range(N)]
-    #     return mtx
-    # p = ChromaticNumberProblem(N=3, Adj_Matrix=Adj_Matrix, Var_Matrix = Var_Matrix)
-    # print("Here are the no sharing color constraints: ")
-    # for c in p.no_sharing_color():
-    #     print(p.format_constraint(c))
-    # print("Here is the: Only use valid color constraints: ")
-    # for c in p.only_use_valid_color():
-    #     print(p.format_constraint(c))
-    # print("Here is the uni color constraints: ")
-    # for c in p.uni_color():
-    #     print(p.format_constraint(c))
-    # print("Here is color in sequence constraints: ")
-    # for c in p.color_in_sequence():
-    #     print(p.format_constraint(c))
-    # print("Here is the objective function formatted: ")
-    # print(p.format_objective_fxn())
-    # print("Variable type for the 3v chromatic: ")
-    # print(p.format_variable_type())
-    #
-    # print("Looking good, let's see what lp text it makes: ")
-    # print(p.produce_lp())
-    # #################################################################################################################
-    # generate_problem()
     res = generate_HWproblem()
-    with open("lp.txt", "w+") as f:
+    with open("lp.lp", "w+") as f:
         f.write(res)
-
     pass
 
 
