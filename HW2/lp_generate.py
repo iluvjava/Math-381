@@ -239,6 +239,7 @@ def generate_HWproblem():
         print(str(row)[1:-1])
     return res
 
+
 if __name__ == "__main__":
     res = generate_HWproblem()
     with open("lp.lp", "w+") as f:

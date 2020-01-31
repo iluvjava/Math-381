@@ -49,4 +49,4 @@ specify_vartype():
 
 
 produce():
-* This function is going to return a string, which is going to be the text input for the lpsolve IDE.
+* This function is going to return a string, which is going to be the text input for the lpsolve IDE
