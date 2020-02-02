@@ -1,0 +1,39 @@
+Name,Price($),Weight(g),Calories,Fat(g),Saturated fat(g),Cholesterol(mg),Sodium(mg),Carbohydrate(g),Protein(g),Vitamin D(mcg),Calcium(mg),Iron(mg),Potassium(mg),Caffeine(mg),Vegan,Vegetarian
+Caff Americano,3.45,470,15,0,0,0,10,2,1,,,,,225,Y,Y
+Cappuccino,4.45,470,120,4,2,15,100,12,8,,,,,150,N,Y
+Iced Coffee,2.5,470,80,0,0,0,10,20,0,,,,,165,Y,Y
+Cold Brew,3.95,470,5,0,0,0,15,0,0,,,,,205,Y,Y
+Nitro Cold Brew,4.75,470,5,0,0,0,10,0,0,,,,,280,Y,Y
+Iced Caramel Macchiato,4.65,470,250,7,4.5,25,150,35,10,,,,,150,N,Y
+Flat White,5.12,470,220,11,7,35,150,18,12,,,,,195,N,Y
+Caffe Mocha,4.45,470,360,15,9,50,150,44,13,,,,,175,N,Y
+Caramel Frappuccino,4.75,470,420,15,9,45,230,57,4,,,,,90,N,Y
+Coffee Frappuccino,3.95,470,230,3,2,10,230,46,3,,,,,95,N,Y
+Matcha Frappuccino,4.75,470,410,15,9,50,0,63,6,,,,,70,N,Y
+Shaken Iced Tea,2.45,470,45,0,0,0,10,11,0,,,,,25,Y,Y
+Strawberry Acai,3.85,470,90,0,0,0,15,23,0,,,,,45,Y,Y
+Pink Drink,5.05,470,140,2.5,2.5,0,65,27,1,,,,,45,Y,Y
+Mango Dragonfruit,4.45,470,90,0,0,0,15,21,0,,,,,45,Y,Y
+Hot Chocolate,3.45,470,400,16,10,55,170,50,14,,,,,25,N,Y
+White Hot Chocolate,3.95,470,440,19,12,55,260,55,15,,,,,0,N,Y
+Sausage, Cheddar & Egg Sandwich,3.75,148,480,29,10,165,880,34,18,,,,,,,
+Bacon, Gouda, & Egg Breakfast Sandwich,3.95,116,370,18,7,170,780,33,18,,,,,,N,N
+Spinach, Feta & Cage Free Egg White Breakfast Wrap,4.15,159,280,8,3,20,830,34,20,,,,,,N,Y
+Chicken Sausage & Bacon Biscuit,4.95,132,450,22,9,85,1160,35,26,,,,,,N,N
+Double-Smoked Bacon, Cheddar & Egg Sandwich,5.15,148,520,28,13,220,940,42,22,,,,,,N,N
+Crispy Grilled Cheese Sandwich,5.95,143,540,29,16,75,1060,47,21,,,,,,N,Y
+Ham & Swiss Panini,6.75,176,490,24,10,80,1250,42,25,,,,,,N,N
+Chicken & Double-Smoked Bacon,6.75,201,620,26,8,110,1460,65,31,,,,,,N,N
+Chicken Artichoke on Ancient Grain Flatbread Panini,6.75,????,500,18,6,65,900,58,28,,,,,,N,N
+Chicken Wrap Protein Box,8.45,423,690,31,10,65,1000,77,30,,,,,,N,N
+Smoked Turkey Protein Box,8.45,385,570,23,10,90,1620,54,35,,,,,,N,N
+Eggs & Cheese Protein Box,6.25,250,470,25,7,385,540,40,23,,,,,,N,Y
+PB&J Protein Box,5.65,210,520,26,7,25,570,54,20,,,,,,Y,Y
+Lemon Crunch Yogurt Parfait,3.75,162,330,12,6,65,90,42,14,,,,,,Y,Y
+Berry Trio Parfait,3.75,????,240,2.5,0,5,125,39,14,,,,,,Y,Y
+Siggi's 0% Vanilla Yogurt,2.45,150,120,0,0,10,55,12,15,,,,,,Y,Y
+Chocolate Croissant,2.95,80,340,20,12,50,280,38,5,,,,,,N,N
+Ham & Cheese Croissant,3.75,102,320,17,9,65,490,28,14,,,,,,Y,Y
+Everything Bagel,2,100,290,4,1,5,450,53,11,,,,,,N,N
+Blueberry Muffin,2.65,110,360,15,3,50,270,52,5,,,,,,Y,Y
+,,,,,,,,,,,,,,,Y,Y
