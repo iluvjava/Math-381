@@ -111,6 +111,7 @@ class DietModel:
         res = ""
         h = self.food_matrix_height()
         w = self.food_matrix_width()
+        # 17 nutrition constraints.
         for I in range(h):
             for J in range(w):
                 if d[I, J] == 0:
@@ -119,6 +120,10 @@ class DietModel:
                 res += f"{'' if J == 0 else ' + '}" f"{c}{self.__Decision_Variables[J]}"
 
             res += f"<= {self.get_constraint_vector()[I]};\n"
+        # non-negativity constraints
+        res += "\n"
+        for X in self.__Decision_Variables:
+            res += f"{X}>=0; "
         return res + "\n"
 
     def format_vartype(self):
