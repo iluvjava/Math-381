@@ -3,6 +3,7 @@ Name: Group 4
 Class: math 381
 """
 
+__all__ = ["DietModel", "read_all_data"]
 from typing import List
 
 def read_csv(filename: str, ignore_1strow = False):
@@ -147,6 +148,9 @@ class DietModel:
         output_LP += self.format_vartype()
         return output_LP
 
+    def get_food_list(self, variablesindices):
+        return [self.__Columns[I] for I in variablesindices]
+
 def try_reducedLP():
     the_data = read_all_data(filelist=["All Meals.txt"])
     reduced_lp = DietModel(the_data[0:15])
@@ -154,6 +158,7 @@ def try_reducedLP():
     print(reduced_lp)
     with open("reduced_lp.lp", "w+") as f:
         f.write(reduced_lp)
+    return reduced_lp
 
 def main():
     the_data = read_all_data()
