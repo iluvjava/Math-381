@@ -3,7 +3,7 @@ Name: Group 4
 Class: math 381
 """
 
-__all__ = ["DietModel", "read_all_data"]
+__all__ = ["DietModel", "read_all_data", "try_reducedLP"]
 from typing import List
 
 def read_csv(filename: str, ignore_1strow = False):
@@ -67,6 +67,7 @@ class DietModel:
             food_Matrix.append([float(J) if is_number(J) else (1 if J == "N" else 0) for J in Row[1:]])
         self.__FoodMatrixTranspose = food_Matrix
         self.__Decision_Variables = [f"x{I}" for I in range(len(food_Matrix))]
+        self.__FoodNames = [Row[0] for Row in Alldata]
 
     def get_columns(self):
         return self.__Columns
@@ -149,15 +150,15 @@ class DietModel:
         return output_LP
 
     def get_food_list(self, variablesindices):
-        return [self.__Columns[I] for I in variablesindices]
+        return [self.__FoodNames[I] for I in variablesindices]
 
 def try_reducedLP():
-    the_data = read_all_data(filelist=["All Meals.txt"])
-    reduced_lp = DietModel(the_data[0:15])
-    reduced_lp = reduced_lp.format_lp()
-    print(reduced_lp)
+    the_data = read_all_data(filelist=["All Meals.txt", "Starbucks Food.txt"])
+    reduced_lp = DietModel(the_data)
+    reduced_lp_string = reduced_lp.format_lp()
+    print(reduced_lp_string)
     with open("reduced_lp.lp", "w+") as f:
-        f.write(reduced_lp)
+        f.write(reduced_lp_string)
     return reduced_lp
 
 def main():
