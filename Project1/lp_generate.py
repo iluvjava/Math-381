@@ -120,9 +120,9 @@ class DietModel:
         # 17 nutrition constraints.
         for I in range(h):
             for J in range(w):
-                if d[I, J] == 0:
+                if self[I, J] == 0:
                     continue
-                c = "" if d[I, J] == 1 else (str(d[I, J]) + "*")
+                c = "" if self[I, J] == 1 else (str(self[I, J]) + "*")
                 res += f"{'' if J == 0 else ' + '}" f"{c}{self.__Decision_Variables[J]}"
 
             res += f"<= {self.get_constraint_vector()[I]};\n"
@@ -148,14 +148,13 @@ class DietModel:
 
 def try_reducedLP():
     the_data = read_all_data(filelist=["All Meals.txt"])
-    reduced_lp = DietModel(the_data)
+    reduced_lp = DietModel(the_data[0:15])
     reduced_lp = reduced_lp.format_lp()
     print(reduced_lp)
     with open("reduced_lp.lp", "w+") as f:
-        f.write(project1_lp)
+        f.write(reduced_lp)
 
-
-if __name__ == "__main__":
+def main():
     the_data = read_all_data()
     print(the_data)
     print("----------------------------------------")
@@ -180,3 +179,6 @@ if __name__ == "__main__":
     print("--------------------------------------reduced LP--------------------------------")
     try_reducedLP()
     pass
+
+if __name__ == "__main__":
+    main()
