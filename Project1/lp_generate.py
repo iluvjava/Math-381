@@ -49,6 +49,7 @@ def is_number(s):
         pass
     return False
 
+
 class DietModel:
 
     def __init__(self, Alldata: List[List[str]]):
@@ -57,17 +58,34 @@ class DietModel:
         food_Matrix = []
         for Row, I in zip(Alldata, range(len(Alldata))):
             food_Matrix.append([float(J) if is_number(J) else (1 if J == "Y" else 0) for J in Row[1:]])
-        self.__FoodMatrix = food_Matrix
+        self.__FoodMatrixTranspose = food_Matrix
         self.__Decision_Variables = [f"x{I}" for I in range(len(food_Matrix))]
 
     def get_columns(self):
         return self.__Columns
 
     def get_food_matrix_transpose(self):
-        return self.__FoodMatrix
+        return self.__FoodMatrixTranspose
 
     def get_decision_variables(self):
         return self.__Decision_Variables
+
+    def food_matrix_height(self):
+        return len(self.__FoodMatrixTranspose[0])
+
+    def food_matrix_width(self):
+        return len(self.__FoodMatrixTranspose)
+
+    def get_constraint_vector(self):
+        res = []
+        res.append(500/7) # Money he spend on each for the last week, eating the same food per day.
+        res.append(67*0.06*1000) # The total amount of weight of food he can eat per day.
+        res.append(2000) # He is on a 2000 calorie diet.
+        res += [65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400] # nutrition constraints
+        res.append(len(self.__FoodMatrixTranspose)) # not on vegan diet.
+        res.append(len(self.__FoodMatrixTranspose)) # not on vegetarian diet.
+        res.append(3) # only 3 meals a day.
+        return res
 
     def __getitem__(self, indx):
         """
@@ -80,9 +98,37 @@ class DietModel:
             A float, the value of that entry, in the Food Matrix.
         """
         I, J = indx
-        return self.__FoodMatrix[J][I]
+        return self.__FoodMatrixTranspose[J][I]
+
+    def format_objfxn(self):
+        res = "max: "
+        for I in range(self.food_matrix_width()):
+            res += f"{self[0, I]}*{self.__Decision_Variables[I]}{' + ' if I != self.food_matrix_width() - 1 else ';'}"
+            # Assume there is no food with cost 0.
+        return res + "\n"
+
+    def format_constraints(self):
+        res = ""
+        h = self.food_matrix_height()
+        w = self.food_matrix_width()
+        for I in range(h):
+            for J in range(w):
+                if d[I, J] == 0:
+                    continue
+                c = "" if d[I, J] == 1 else (str(d[I, J]) + "*")
+                res += f"{c}{self.__Decision_Variables[J]}" \
+                       f"{' + ' if J != w - 1 else ''}"
+            res += f"<= {self.get_constraint_vector()[I]};\n"
+        return res + "\n"
+
+    def format_vartype(self):
+        res = "int "
+        res += ", ".join(self.__Decision_Variables) + ";"
+        return res + "\n"
 
     def format_lp(self):
+        output_LP = ""
+        
         pass
 
 
@@ -98,6 +144,8 @@ if __name__ == "__main__":
     print(f"The matrix is {len(d.get_food_matrix_transpose())} x {len(d.get_food_matrix_transpose()[0])}")
     print(f"The (2, 0) element of the food matrix is: {d[2, 0]}")
     print(f"These are the decision variables: {d.get_decision_variables()}")
-
-
+    print(f"These are the constraints vectors: {d.get_constraint_vector()}, len = {len(d.get_constraint_vector())}")
+    print(f"There is the objective function: {d.format_objfxn()}")
+    print(f"format constraints:\n{d.format_constraints()}")
+    print(f"format the variable types:\n{d.format_vartype()}")
     pass
