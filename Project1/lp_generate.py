@@ -3,6 +3,7 @@ Name: Group 4
 Class: math 381
 """
 
+from typing import List
 
 def read_csv(filename: str, ignore_1strow = False):
     with open(filename) as f:
@@ -26,8 +27,14 @@ def read_all_csv():
 
 
 class DietModel:
-    def __int__(self):
+    def __int__(self, Alldata: List[List[str]]):
+        self.__Columns = Alldata[0]
+        Alldata.pop(0)
+        # Convert String data to numbers in python.
+        for R in Alldata:
+            pass
         pass
+
 
 
 
