@@ -16,11 +16,11 @@ Pink Drink,5.05,470,140,2.5,2.5,0,65,27,1,,,,,45,Y,Y
 Mango Dragonfruit,4.45,470,90,0,0,0,15,21,0,,,,,45,Y,Y
 Hot Chocolate,3.45,470,400,16,10,55,170,50,14,,,,,25,N,Y
 White Hot Chocolate,3.95,470,440,19,12,55,260,55,15,,,,,0,N,Y
-Sausage, Cheddar & Egg Sandwich,3.75,148,480,29,10,165,880,34,18,,,,,,,
-Bacon, Gouda, & Egg Breakfast Sandwich,3.95,116,370,18,7,170,780,33,18,,,,,,N,N
-Spinach, Feta & Cage Free Egg White Breakfast Wrap,4.15,159,280,8,3,20,830,34,20,,,,,,N,Y
+Sausage Cheddar & Egg Sandwich,3.75,148,480,29,10,165,880,34,18,,,,,,N,N
+Bacon Gouda & Egg Breakfast Sandwich,3.95,116,370,18,7,170,780,33,18,,,,,,N,N
+Spinach Feta & Cage Free Egg White Breakfast Wrap,4.15,159,280,8,3,20,830,34,20,,,,,,N,Y
 Chicken Sausage & Bacon Biscuit,4.95,132,450,22,9,85,1160,35,26,,,,,,N,N
-Double-Smoked Bacon, Cheddar & Egg Sandwich,5.15,148,520,28,13,220,940,42,22,,,,,,N,N
+Double-Smoked Bacon Cheddar & Egg Sandwich,5.15,148,520,28,13,220,940,42,22,,,,,,N,N
 Crispy Grilled Cheese Sandwich,5.95,143,540,29,16,75,1060,47,21,,,,,,N,Y
 Ham & Swiss Panini,6.75,176,490,24,10,80,1250,42,25,,,,,,N,N
 Chicken & Double-Smoked Bacon,6.75,201,620,26,8,110,1460,65,31,,,,,,N,N
@@ -36,4 +36,3 @@ Chocolate Croissant,2.95,80,340,20,12,50,280,38,5,,,,,,N,N
 Ham & Cheese Croissant,3.75,102,320,17,9,65,490,28,14,,,,,,Y,Y
 Everything Bagel,2,100,290,4,1,5,450,53,11,,,,,,N,N
 Blueberry Muffin,2.65,110,360,15,3,50,270,52,5,,,,,,Y,Y
-,,,,,,,,,,,,,,,Y,Y
