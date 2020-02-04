@@ -84,6 +84,9 @@ class DietModel:
     def food_matrix_width(self):
         return len(self.__FoodMatrixTranspose)
 
+    def get_food_names(self):
+        return self.__FoodNames
+
     def get_constraint_vector(self):
         res = []
         res.append(500/7) # Money he spend on each for the last week, eating the same food per day.
