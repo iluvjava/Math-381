@@ -57,7 +57,7 @@ class DietModel:
         # Convert String data to numbers in python.
         food_Matrix = []
         for Row, I in zip(Alldata, range(len(Alldata))):
-            food_Matrix.append([float(J) if is_number(J) else (1 if J == "Y" else 0) for J in Row[1:]])
+            food_Matrix.append([float(J) if is_number(J) else (1 if J == "N" else 0) for J in Row[1:]])
         self.__FoodMatrixTranspose = food_Matrix
         self.__Decision_Variables = [f"x{I}" for I in range(len(food_Matrix))]
 
