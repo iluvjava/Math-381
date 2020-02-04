@@ -1,0 +1,35 @@
+Model name:  'LPSolver' - run #1
+Objective:   Maximize(R0)
+
+SUBMITTED
+Model size:       17 constraints,     180 variables,         1992 non-zeros.
+Sets:                                   0 GUB,                  0 SOS.
+
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+
+Relaxed solution       71.4285714286 after          9 iter is B&B base.
+
+Feasible solution              69.61 after        478 iter,       223 nodes (gap 2.5%)
+Improved solution              70.15 after        746 iter,       355 nodes (gap 1.8%)
+Improved solution              70.35 after        995 iter,       464 nodes (gap 1.5%)
+Improved solution              70.55 after       1412 iter,       633 nodes (gap 1.2%)
+Improved solution              71.34 after       2046 iter,       942 nodes (gap 0.1%)
+Improved solution               71.4 after       6135 iter,      2529 nodes (gap 0.0%)
+Improved solution              71.41 after      21511 iter,      8424 nodes (gap 0.0%)
+Improved solution              71.42 after     157821 iter,     54380 nodes (gap 0.0%)
+spx_run: Lost feasibility 10 times - iter    1759922 and    539843 nodes.
+lp_solve optimization was stopped by the user.
+
+Optimal solution               71.42 after 2065564801 iter,  14703799 nodes (gap 0.0%).
+Relative numeric accuracy ||*|| = 0
+
+MEMO: lp_solve version 5.5.2.5 for 32 bit OS, with 64 bit REAL variables.
+In the total iteration count 2065564801, 255025839 (12.3%) were bound flips.
+There were 91542274 refactorizations, 0 triggered by time and 84192012 by density.
+... on average 19.8 major pivots per refactorization.
+The largest [LUSOL v2.2.1.0] fact(B) had 134 NZ entries, 1.0x largest basis.
+The maximum B&B level was 129, 0.4x MIP order, 116 at the optimal solution.
+The constraint matrix inf-norm is 7250, with a dynamic range of 72500.
+Time to load data was 0.001 seconds, presolve used 0.006 seconds,
+... 32244.404 seconds in simplex solver, in total 32244.411 seconds.
