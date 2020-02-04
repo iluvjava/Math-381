@@ -14,8 +14,14 @@ def read_csv(filename: str, ignore_1strow = False):
         lines.pop(0)
     return lines
 
-def read_all_data():
-    fileslist = ["All Meals.txt", "DM All Food.txt", "Starbucks Food.txt"]
+def read_all_data(filelist = None):
+    """
+        First tile in the array must be all the meals!
+    :param filelist:
+        List if file names.
+    :return:
+    """
+    fileslist = ["All Meals.txt", "DM All Food.txt", "Starbucks Food.txt"] if filelist is None else filelist
     merged_Data = []
     for fname, I in zip(fileslist, range(len(fileslist))):
         the_data = read_csv(fname, I != 0)
@@ -140,6 +146,14 @@ class DietModel:
         output_LP += self.format_vartype()
         return output_LP
 
+def try_reducedLP():
+    the_data = read_all_data(filelist=["All Meals.txt"])
+    reduced_lp = DietModel(the_data)
+    reduced_lp = reduced_lp.format_lp()
+    print(reduced_lp)
+    with open("reduced_lp.lp", "w+") as f:
+        f.write(project1_lp)
+
 
 if __name__ == "__main__":
     the_data = read_all_data()
@@ -162,4 +176,7 @@ if __name__ == "__main__":
     print(project1_lp)
     with open("project1_lp.lp", "w+") as f:
         f.write(project1_lp)
+
+    print("--------------------------------------reduced LP--------------------------------")
+    try_reducedLP()
     pass
