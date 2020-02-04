@@ -119,13 +119,14 @@ class DietModel:
         w = self.food_matrix_width()
         # 17 nutrition constraints.
         for I in range(h):
+            counter = 0 # no right hand side if all coefficients are 0s.
             for J in range(w):
                 if self[I, J] == 0:
                     continue
+                counter += 1
                 c = "" if self[I, J] == 1 else (str(self[I, J]) + "*")
                 res += f"{'' if J == 0 else ' + '}" f"{c}{self.__Decision_Variables[J]}"
-
-            res += f"<= {self.get_constraint_vector()[I]};\n"
+            res += "" if counter == 0 else f"<= {self.get_constraint_vector()[I]};\n"
         # non-negativity constraints
         res += "\n"
         for X in self.__Decision_Variables:
