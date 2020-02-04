@@ -116,8 +116,8 @@ class DietModel:
                 if d[I, J] == 0:
                     continue
                 c = "" if d[I, J] == 1 else (str(d[I, J]) + "*")
-                res += f"{c}{self.__Decision_Variables[J]}" \
-                       f"{' + ' if J != w - 1 else ''}"
+                res += f"{'' if J == 0 else ' + '}" f"{c}{self.__Decision_Variables[J]}"
+
             res += f"<= {self.get_constraint_vector()[I]};\n"
         return res + "\n"
 
