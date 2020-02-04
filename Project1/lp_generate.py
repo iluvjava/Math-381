@@ -127,11 +127,11 @@ class DietModel:
         return res + "\n"
 
     def format_lp(self):
-        output_LP = "\\*This is the obj fxn for diet problem: *\\\n"
+        output_LP = "//This is the obj fxn for diet problem:\n"
         output_LP += self.format_objfxn()
-        output_LP += "\\*These are the constraints: *\\\n"
+        output_LP += "//These are the constraints:\n"
         output_LP += self.format_constraints()
-        output_LP += "\\*Make all variable type integers : *\\\n"
+        output_LP += "//Make all variable type integers :\n"
         output_LP += self.format_vartype()
         return output_LP
 
@@ -155,6 +155,6 @@ if __name__ == "__main__":
     print("--------------------------------------COMPLETE LP---------------------------")
     project1_lp = d.format_lp()
     print(project1_lp)
-    with open("project1_lp.lp", "a+") as f:
+    with open("project1_lp.lp", "w+") as f:
         f.write(project1_lp)
     pass
