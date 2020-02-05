@@ -1,10 +1,14 @@
 """
 Name: Group 4
 Class: math 381
+
+This file contains all the codes that read the data collected from the model; and the producing the input for the
+complete lp problem.
 """
 
 __all__ = ["DietModel", "read_all_data", "try_reducedLP"]
 from typing import List
+
 
 def read_csv(filename: str, ignore_1strow = False):
     with open(filename) as f:
@@ -57,8 +61,11 @@ def is_number(s):
     return False
 
 
-class DietModel:
 
+class DietModel:
+    """
+    The class is the internal model for everything that is involved for the lp problem.
+    """
     def __init__(self, Alldata: List[List[str]]):
         self.__Columns = Alldata.pop(0)
         # Convert String data to numbers in python.
@@ -97,6 +104,14 @@ class DietModel:
         res.append(len(self.__FoodMatrixTranspose)) # not on vegetarian diet.
         res.append(3) # only 3 meals a day.
         return res
+
+    def get_constraint_vector_operater(self):
+        """
+        This method return a vector of operators for the constraint vector on the right hand side.
+        :return:
+            List[str]
+        """
+        pass
 
     def __getitem__(self, indx):
         """
@@ -152,8 +167,8 @@ class DietModel:
         output_LP += self.format_vartype()
         return output_LP
 
-    def get_food_list(self, variablesindices):
-        return [self.__FoodNames[I] for I in variablesindices]
+    def get_food_list(self, indx_list):
+        return [self.__FoodNames[I] for I in indx_list]
 
     def get_food_name(self, var_indx: int):
         return self.__FoodNames[var_indx]
