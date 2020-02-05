@@ -123,7 +123,7 @@ class DietModel:
         h = self.food_matrix_height()
         w = self.food_matrix_width()
         # 17 nutrition constraints.
-        for I in range(h):
+        for I in range(1, h): # Ignore the first money constraints
             counter = 0 # no right hand side if all coefficients are 0s.
             for J in range(w):
                 if self[I, J] == 0:
@@ -155,6 +155,9 @@ class DietModel:
     def get_food_list(self, variablesindices):
         return [self.__FoodNames[I] for I in variablesindices]
 
+    def get_food_name(self, var_indx: int):
+        return self.__FoodNames[var_indx]
+
 def try_reducedLP():
     the_data = read_all_data(filelist=["All Meals.txt", "Starbucks Food.txt"])
     reduced_lp = DietModel(the_data)
@@ -185,6 +188,7 @@ def main():
     print(project1_lp)
     with open("project1_lp.lp", "w+") as f:
         f.write(project1_lp)
+
 
     print("--------------------------------------reduced LP--------------------------------")
     try_reducedLP()
