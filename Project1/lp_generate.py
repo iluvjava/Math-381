@@ -105,12 +105,16 @@ class DietModel:
         res.append(3) # only 3 meals a day.
         return res
 
-    def get_constraint_vector_operater(self):
+    def get_constraint_vector__with_operater(self):
         """
         This method return a vector of operators for the constraint vector on the right hand side.
         :return:
-            List[str]
+            List[str], the constraint is represented in the following way:
+            [
+                ("<=", "b1"), ("=", "b2") ... ("<=", "bn")
+            ]
         """
+        res = ["<"]
         pass
 
     def __getitem__(self, indx):
@@ -201,6 +205,7 @@ def main():
     print("--------------------------------------COMPLETE LP---------------------------")
     project1_lp = d.format_lp()
     print(project1_lp)
+    # Writing the LP input file into a file.
     with open("project1_lp.lp", "w+") as f:
         f.write(project1_lp)
 
