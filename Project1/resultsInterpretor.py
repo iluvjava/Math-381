@@ -11,7 +11,7 @@ from lp_generate import *
 import os.path as p
 
 # Macro Settings
-RESULT_FILE_NAME = "lp_results.csv"
+RESULT_FILE_NAME = "results_objective.csv"
 
 
 def try_read_lp_results(datafile = RESULT_FILE_NAME):
@@ -48,14 +48,14 @@ def interpret_results(results, obj_fxn_values):
     for S, I in zip(solutions, range(len(solutions))):
         output += f"--- Solution {I + 1}, obj fxn value: {obj_fxn_values[I + 1]}---\n"
         for K, V in zip(S.keys(), S.values()):
-            output += f"\t{d.get_food_name(K)}:{V}\n"
+            output += f"\t{d.get_food_name(K)}: {V}\n"
     return output
 
 
 def main():
     lp_Results = try_read_lp_results()
     if lp_Results is None:
-        print("expect \"lp_results.csv under\" under root directory but it does exists. ")
+        print(f"expect \"{RESULT_FILE_NAME}\" under root directory but it does not exists. ")
         return
 
     first_Row = lp_Results.pop(0) # Trim off the first row.
