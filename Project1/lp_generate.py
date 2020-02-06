@@ -61,7 +61,6 @@ def is_number(s):
     return False
 
 
-
 class DietModel:
     """
     The class is the internal model for everything that is involved for the lp problem.
@@ -96,30 +95,17 @@ class DietModel:
     def get_food_names(self):
         return self.__FoodNames
 
-    def get_constraint_vector__with_opt(self):
+    def markup_constraints(self):
         """
-        This method return a vector of operators for the constraint vector on the right hand side.
+        This is a method that is created for the convenience and robustness for generating the constraints
+        for the problem.
         :return:
-            List[str], the constraint is represented in the following way:
-            [
-                "<=b1;\n", "<=b2;\n", ..."<=bn;\n"
-            ]
+            (I: Row number, operator, rhs)
         """
-
-        # These are all the constraints that have a "<=" on the right hand side.
-        res = []
-        res.append(None)  # Place holder, originally represents the money constraint but it's removed.
-        res.append(67 * 0.06 * 1000)  # The total amount of weight of food he can eat per day.
-        res.append(2000)  # He is on a 2000 calorie diet.
-        res += [65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400]  # nutrition constraints
-        res.append(None)  # Won't be used, just a place holder
-        res.append(None)  # won't be used, just a place holder
-        res.append(3)  # only 3 meals a day.
-        res = [(f"<={I};\n") if I is not None else None for I in res]
-        min_Calorie = 931
-        res.append(f">={min_Calorie};\n")
-
-        return res
+        row_number = list(range(1, 14)) + [16, 2]
+        operators = ["<="]*14 + [">="]
+        rhs = [67 * 0.06 * 1000, 2000, 65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400, 3, 931]
+        return [(I, J, K) for I, J, K in zip(row_number, operators, rhs)]
 
     def __getitem__(self, indx):
         """
@@ -145,43 +131,28 @@ class DietModel:
         return res + "\n"
 
     def format_constraints(self):
-        """
-            For mats all constraint of the LP according to the food matrix and the right hand side.
-        :return:
-        """
-        rhs = self.get_constraint_vector__with_opt()
-        constraints = []
-        h = self.food_matrix_height()
         w = self.food_matrix_width()
-        # The for loop construct all the constraints with max constraints.
-        for I in range(1, h): # Starts with 1, ignoring the first money constraint of the LP.
-            if self.get_constraint_vector__with_opt()[I] is None:
-                continue  # skip the vegetarian row.
+        constraints = []
+        for I, J, K in self.markup_constraints():
             non_Zero = {}
-            for J in range(w):
-                if self[I, J] != 0:
-                    non_Zero[J] = self[I, J]
-            if len(non_Zero.keys()):
-                constraints.append((non_Zero, I)) # map of non_zero decision variables and index of the Row.
-
-        # The min calorie constraint:
-        non_Zero = {}
-        for J in range(w):
-            if self[2, J] != 0:
-                non_Zero[J] = self[2, J]
-        constraints.append((non_Zero, 17))
-
-        # Formatting all the constraints:
+            for L in range(w):
+                if self[I, L] != 0:
+                    non_Zero[L] = self[I, L]
+            if len(non_Zero):
+                constraints.append((non_Zero, J, K))
         lp_string = ""
-        for constraint, I in constraints:
-            lhs = [f"{(str(V) +'*') if V != 1 else ''}x{K}" for K, V in constraint.items()]
-            lhs = "+".join(lhs)
-            rhs = self.get_constraint_vector__with_opt()[I]
-            lp_string += lhs + rhs
+
+        # Formats above constraints:
+        for constraint in constraints:
+            line = [f"{(str(V) + '*') if V != 1 else ''}x{K}" for K, V in constraint[0].items()]
+            line = " + ".join(line)
+            line += f"{constraint[1]}{constraint[2]};\n"
+            lp_string += line
         # Non negativity constraint
         for X in self.__Decision_Variables:
-                lp_string += f"{X}>=0;"
+            lp_string += f"{X}>=0;"
         return lp_string + "\n"
+
 
     def format_vartype(self):
         res = "int "
