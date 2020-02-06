@@ -83,6 +83,8 @@ class DietModel:
         self.__Decision_Variables = [f"x{I}" for I in range(len(food_Matrix))]
         self.__FoodNames = [Row[0] for Row in Alldata]
         self.__Obj = obj
+        self.__Scale = 1;
+        self.__Weight = 67;
 
     def get_columns(self):
         return self.__Columns
@@ -102,7 +104,14 @@ class DietModel:
     def get_food_names(self):
         return self.__FoodNames
 
-    def markup_constraints(self, scale = 1):
+    def set_scale(self, scale):
+        assert scale >= 0, "Calorie rescaling factor cannot be less than zero. "
+        self.__Scale = scale
+    def set_weigh(self, weight):
+        assert weight >= 0, "Subject's weight cannot be less than zero."
+        self.__Weight = weight
+
+    def markup_constraints(self):
         """
         This is a method that is created for the convenience and robustness for generating the constraints
         for the problem.
@@ -111,8 +120,8 @@ class DietModel:
         """
         row_number = list(range(1, 14)) + [16, 2]
         operators = ["<="]*14 + [">="]
-        rhs = [67 * 0.06 * 1000, 2000, 65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400, 3, 931]
-        rhs = [I*scale for I in rhs]
+        rhs = [self.__Weight * 0.06 * 1000, 2000, 65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400, 3, 931]
+        rhs = [I*self.__Scale for I in rhs]
         return [(I, J, K) for I, J, K in zip(row_number, operators, rhs)]
 
     def __getitem__(self, indx):
@@ -188,10 +197,10 @@ class VegetarianDietModel(DietModel):
         Vegetarian model uses constraint to limit food intake.
         if a food is not vegetarian, then it should not appear in the final solution.
     """
-    def __init__(self, data, obj="max"):
+    def __init__(self, data, obj = "max"):
         super(VegetarianDietModel, self).__init__(data, obj)
 
-    def markup_constraints(self, scale = 1):
+    def markup_constraints(self):
         res = super(VegetarianDietModel, self).markup_constraints()
         res.append((15, "<=", 0))
         return res
@@ -203,7 +212,7 @@ class VeganDietModel(DietModel):
     def __init__(self, data, obj = "max"):
         super(VeganDietModel, self).__init__(data, obj)
 
-    def markup_constraints(self, scale = 1):
+    def markup_constraints(self):
         res = super(VeganDietModel, self).markup_constraints()
         res.append((14, "<=", 0))
         return res
@@ -242,11 +251,7 @@ def main():
     write_to_file("vege_lp_max.lp", vege_lp_max)
     write_to_file("vege_lp_min.lp", vege_lp_min)
     write_to_file("vegan_lp_max.lp", vegan_lp_max)
-    write_to_file("vegan_lp_min.lp", vegan_lp_min)
-
-
-
-
+    write_to_file("vegan_lp_min.lp", vegan_lp_min)  
 
 if __name__ == "__main__":
     main()
