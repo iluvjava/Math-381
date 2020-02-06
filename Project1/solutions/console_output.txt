@@ -1,0 +1,39 @@
+
+Model name:  'LPSolver' - run #1
+Objective:   Maximize(R0)
+
+SUBMITTED
+Model size:       15 constraints,     180 variables,         1912 non-zeros.
+Sets:                                   0 GUB,                  0 SOS.
+
+Using DUAL simplex for phase 1 and PRIMAL simplex for phase 2.
+The primal and dual simplex pricing strategy set to 'Devex'.
+
+Found feasibility by dual simplex after             1 iter.
+
+Relaxed solution       84.5465867421 after         22 iter is B&B base.
+
+Feasible solution              62.88 after        777 iter,       216 nodes (gap 25.3%)
+Improved solution              70.48 after        982 iter,       325 nodes (gap 16.4%)
+Improved solution              71.57 after       1057 iter,       370 nodes (gap 15.2%)
+Improved solution              71.93 after       1068 iter,       381 nodes (gap 14.7%)
+Improved solution              72.49 after       1128 iter,       419 nodes (gap 14.1%)
+Improved solution              73.43 after       1228 iter,       478 nodes (gap 13.0%)
+Improved solution              73.86 after       4778 iter,      2365 nodes (gap 12.5%)
+Improved solution              74.72 after       4905 iter,      2442 nodes (gap 11.5%)
+Improved solution              74.98 after       6741 iter,      3621 nodes (gap 11.2%)
+Improved solution              75.58 after       6911 iter,      3723 nodes (gap 10.5%)
+
+Optimal solution               75.58 after       8244 iter,      4624 nodes (gap 10.5%).
+
+Relative numeric accuracy ||*|| = 0
+
+ MEMO: lp_solve version 5.5.2.5 for 32 bit OS, with 64 bit REAL variables.
+      In the total iteration count 8244, 1147 (13.9%) were bound flips.
+      There were 2319 refactorizations, 0 triggered by time and 2 by density.
+       ... on average 3.1 major pivots per refactorization.
+      The largest [LUSOL v2.2.1.0] fact(B) had 89 NZ entries, 1.0x largest basis.
+      The maximum B&B level was 113, 0.3x MIP order, 35 at the optimal solution.
+      The constraint matrix inf-norm is 7250, with a dynamic range of 72500.
+      Time to load data was 0.003 seconds, presolve used 0.006 seconds,
+       ... 0.441 seconds in simplex solver, in total 0.450 seconds.

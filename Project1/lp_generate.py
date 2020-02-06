@@ -8,7 +8,7 @@ complete lp problem.
 
 __all__ = ["DietModel", "read_all_data", "try_reducedLP"]
 from typing import List
-
+FILE_LIST = ["All Meals(fixed).txt", "DM All Food.txt", "Starbucks Food.txt"]
 
 def read_csv(filename: str, ignore_1strow = False):
     with open(filename) as f:
@@ -26,7 +26,7 @@ def read_all_data(filelist = None):
         List if file names.
     :return:
     """
-    fileslist = ["All Meals.txt", "DM All Food.txt", "Starbucks Food.txt"] if filelist is None else filelist
+    fileslist = FILE_LIST if filelist is None else filelist
     merged_Data = []
     for fname, I in zip(fileslist, range(len(fileslist))):
         the_data = read_csv(fname, I != 0)
@@ -67,7 +67,7 @@ class DietModel:
     __FoodMatrixTranspose:
         Literally the transpose of the food matrix as it describes in the paper.
     """
-    def __init__(self, Alldata: List[List[str]]):
+    def __init__(self, Alldata: List[List[str]], vegetarian=False, vegan=False, obj="max"):
         self.__Columns = Alldata.pop(0)
         # Convert String data to numbers in python.
         food_Matrix = []

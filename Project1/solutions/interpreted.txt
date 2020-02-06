@@ -1,0 +1,88 @@
+['Variables', 'MILP Feasible', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'MILP Better', 'result']
+['', '62.88', '70.48', '71.57', '71.93', '72.49', '73.43', '73.86', '74.72', '74.98', '75.58', '75.58']
+--- Solution 1, obj fxn value: 62.88---
+	Veggi Dip: 3
+	Redbull: 2
+	Monster drink: 3
+	Nitro Cold Brew: 1
+	Hi-chew candy: 2
+--- Solution 2, obj fxn value: 70.48---
+	Veggi Dip: 3
+	Redbull: 3
+	Berry Trio Parfait: 2
+	Monster drink: 2
+	grape: 1
+	Nitro Cold Brew: 1
+	Hi-chew candy: 1
+--- Solution 3, obj fxn value: 71.57---
+	Veggi Dip: 3
+	Redbull: 2
+	Berry Trio Parfait: 2
+	Monster drink: 2
+	grape: 1
+	Nitro Cold Brew: 1
+	Hi-chew candy: 1
+	Calpico: 1
+	Chobani yogurt: 1
+--- Solution 4, obj fxn value: 71.93---
+	Veggi Dip: 3
+	Redbull: 2
+	Berry Trio Parfait: 2
+	Monster drink: 2
+	grape: 1
+	Nitro Cold Brew: 1
+	Hi-chew candy: 1
+	Calpico: 1
+	Siggi's 0% Vanilla Yogurt: 1
+--- Solution 5, obj fxn value: 72.49---
+	Veggi Dip: 3
+	Redbull: 2
+	Berry Trio Parfait: 3
+	Monster drink: 2
+	grape: 1
+	Nitro Cold Brew: 1
+	Hi-chew candy: 1
+	Shaken Iced Tea: 1
+--- Solution 6, obj fxn value: 73.43---
+	Veggi Dip: 3
+	Redbull: 2
+	Berry Trio Parfait: 3
+	Monster drink: 2
+	grape: 1
+	Nitro Cold Brew: 1
+	Calpico: 2
+--- Solution 7, obj fxn value: 73.86---
+	Veggi Dip: 3
+	Redbull: 2
+	Berry Trio Parfait: 3
+	Monster drink: 1
+	grape: 1
+	Pink Drink: 3
+--- Solution 8, obj fxn value: 74.72---
+	Veggi Dip: 3
+	Redbull: 1
+	Berry Trio Parfait: 3
+	Monster drink: 1
+	grape: 1
+	Pink Drink: 4
+--- Solution 9, obj fxn value: 74.98---
+	Veggi Dip: 3
+	Redbull: 1
+	Berry Trio Parfait: 3
+	grape: 1
+	Pink Drink: 3
+	Mango Dragonfruit: 2
+--- Solution 10, obj fxn value: 75.58---
+	Veggi Dip: 3
+	Redbull: 1
+	Berry Trio Parfait: 3
+	grape: 1
+	Pink Drink: 4
+	Mango Dragonfruit: 1
+--- Solution 11, obj fxn value: 75.58---
+	Veggi Dip: 3
+	Redbull: 1
+	Berry Trio Parfait: 3
+	grape: 1
+	Pink Drink: 4
+	Mango Dragonfruit: 1

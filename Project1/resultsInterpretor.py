@@ -11,7 +11,7 @@ from lp_generate import *
 import os.path as p
 
 # Macro Settings
-RESULT_FILE_NAME = "results_objective.csv"
+RESULT_FILE_NAME = "solutions/objective.csv"
 
 
 def try_read_lp_results(datafile = RESULT_FILE_NAME):
