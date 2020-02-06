@@ -96,17 +96,6 @@ class DietModel:
     def get_food_names(self):
         return self.__FoodNames
 
-    # def get_constraint_vector(self):
-    #     res = []
-    #     res.append(500/7) # Money he spend on each for the last week, eating the same food per day.
-    #     res.append(67*0.06*1000) # The total amount of weight of food he can eat per day.
-    #     res.append(2000) # He is on a 2000 calorie diet.
-    #     res += [65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400] # nutrition constraints
-    #     res.append(len(self.__FoodMatrixTranspose)) # not on vegan diet.
-    #     res.append(len(self.__FoodMatrixTranspose)) # not on vegetarian diet.
-    #     res.append(3) # only 3 meals a day.
-    #     return res
-
     def get_constraint_vector__with_opt(self):
         """
         This method return a vector of operators for the constraint vector on the right hand side.
@@ -126,8 +115,9 @@ class DietModel:
         res.append(None)  # Won't be used, just a place holder
         res.append(None)  # won't be used, just a place holder
         res.append(3)  # only 3 meals a day.
-        res = [f"<={I};\n" for I in res]
-
+        res = [(f"<={I};\n") if I is not None else None for I in res]
+        min_Calorie = 931
+        res.append(f">={min_Calorie};\n")
 
         return res
 
@@ -163,9 +153,9 @@ class DietModel:
         constraints = []
         h = self.food_matrix_height()
         w = self.food_matrix_width()
-
+        # The for loop construct all the constraints with max constraints.
         for I in range(1, h): # Starts with 1, ignoring the first money constraint of the LP.
-            if I == 13 or I == 14:
+            if self.get_constraint_vector__with_opt()[I] is None:
                 continue  # skip the vegetarian row.
             non_Zero = {}
             for J in range(w):
@@ -173,8 +163,16 @@ class DietModel:
                     non_Zero[J] = self[I, J]
             if len(non_Zero.keys()):
                 constraints.append((non_Zero, I)) # map of non_zero decision variables and index of the Row.
-        lp_string = ""
 
+        # The min calorie constraint:
+        non_Zero = {}
+        for J in range(w):
+            if self[2, J] != 0:
+                non_Zero[J] = self[2, J]
+        constraints.append((non_Zero, 17))
+
+        # Formatting all the constraints:
+        lp_string = ""
         for constraint, I in constraints:
             lhs = [f"{(str(V) +'*') if V != 1 else ''}x{K}" for K, V in constraint.items()]
             lhs = "+".join(lhs)
@@ -221,17 +219,6 @@ def main():
     print(the_data)
     print("----------------------------------------")
     d = DietModel(the_data)
-    print(d.get_columns())
-    print(f"The length is:{d.get_columns()}")
-    print("---------------------------------------")
-    print(d.get_food_matrix_transpose())
-    print(f"The matrix is {len(d.get_food_matrix_transpose())} x {len(d.get_food_matrix_transpose()[0])}")
-    print(f"The (2, 0) element of the food matrix is: {d[2, 0]}")
-    print(f"These are the decision variables: {d.get_decision_variables()}")
-
-    print(f"There is the objective function: {d.format_objfxn()}")
-    print(f"format constraints:\n{d.format_constraints()}")
-    print(f"format the variable types:\n{d.format_vartype()}")
     print("--------------------------------------COMPLETE LP---------------------------")
     project1_lp = d.format_lp()
     print(project1_lp)
@@ -239,10 +226,6 @@ def main():
     with open("project1_lp.lp", "w+") as f:
         f.write(project1_lp)
 
-
-    print("--------------------------------------reduced LP--------------------------------")
-    try_reducedLP()
-    pass
 
 if __name__ == "__main__":
     main()
