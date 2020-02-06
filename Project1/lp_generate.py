@@ -6,7 +6,7 @@ This file contains all the codes that read the data collected from the model; an
 complete lp problem.
 """
 
-__all__ = ["DietModel", "read_all_data", "try_reducedLP"]
+__all__ = ["DietModel", "read_all_data", "try_reducedLP","VegetarianDietModel", "VeganDietModel"]
 from typing import List
 FILE_LIST = ["All Meals(fixed).txt", "DM All Food.txt", "Starbucks Food.txt"]
 
@@ -61,13 +61,19 @@ def is_number(s):
     return False
 
 
+def write_to_file(filename:str, content: str):
+    with open(filename, "w+") as f:
+        f.write(content)
+
+
 class DietModel:
     """
     The class is the internal model for everything that is involved for the lp problem.
     __FoodMatrixTranspose:
         Literally the transpose of the food matrix as it describes in the paper.
     """
-    def __init__(self, Alldata: List[List[str]], vegetarian=False, vegan=False, obj="max"):
+    def __init__(self, Alldata: List[List[str]], obj="max"):
+        Alldata = Alldata.copy()
         self.__Columns = Alldata.pop(0)
         # Convert String data to numbers in python.
         food_Matrix = []
@@ -76,6 +82,7 @@ class DietModel:
         self.__FoodMatrixTranspose = food_Matrix
         self.__Decision_Variables = [f"x{I}" for I in range(len(food_Matrix))]
         self.__FoodNames = [Row[0] for Row in Alldata]
+        self.__Obj = obj
 
     def get_columns(self):
         return self.__Columns
@@ -95,7 +102,7 @@ class DietModel:
     def get_food_names(self):
         return self.__FoodNames
 
-    def markup_constraints(self):
+    def markup_constraints(self, scale = 1):
         """
         This is a method that is created for the convenience and robustness for generating the constraints
         for the problem.
@@ -105,6 +112,7 @@ class DietModel:
         row_number = list(range(1, 14)) + [16, 2]
         operators = ["<="]*14 + [">="]
         rhs = [67 * 0.06 * 1000, 2000, 65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400, 3, 931]
+        rhs = [I*scale for I in rhs]
         return [(I, J, K) for I, J, K in zip(row_number, operators, rhs)]
 
     def __getitem__(self, indx):
@@ -124,7 +132,7 @@ class DietModel:
         return self.__FoodMatrixTranspose[J][I]
 
     def format_objfxn(self):
-        res = "max: "
+        res = f"{self.__Obj}: "
         for I in range(self.food_matrix_width()):
             res += f"{self[0, I]}*{self.__Decision_Variables[I]}{' + ' if I != self.food_matrix_width() - 1 else ';'}"
             # Assume there is no food with cost 0.
@@ -175,6 +183,32 @@ class DietModel:
         return self.__FoodNames[var_indx]
 
 
+class VegetarianDietModel(DietModel):
+    """
+        Vegetarian model uses constraint to limit food intake.
+        if a food is not vegetarian, then it should not appear in the final solution.
+    """
+    def __init__(self, data, obj="max"):
+        super(VegetarianDietModel, self).__init__(data, obj)
+
+    def markup_constraints(self, scale = 1):
+        res = super(VegetarianDietModel, self).markup_constraints()
+        res.append((15, "<=", 0))
+        return res
+
+class VeganDietModel(DietModel):
+    """
+        If a food is not vegan, then don't use it in the final solution.
+    """
+    def __init__(self, data, obj = "max"):
+        super(VeganDietModel, self).__init__(data, obj)
+
+    def markup_constraints(self, scale = 1):
+        res = super(VeganDietModel, self).markup_constraints()
+        res.append((14, "<=", 0))
+        return res
+
+
 def try_reducedLP():
     the_data = read_all_data(filelist=["All Meals.txt", "Starbucks Food.txt"])
     reduced_lp = DietModel(the_data)
@@ -187,15 +221,31 @@ def try_reducedLP():
 
 def main():
     the_data = read_all_data()
-    print(the_data)
-    print("----------------------------------------")
-    d = DietModel(the_data)
-    print("--------------------------------------COMPLETE LP---------------------------")
-    project1_lp = d.format_lp()
-    print(project1_lp)
-    # Writing the LP input file into a file.
-    with open("project1_lp.lp", "w+") as f:
-        f.write(project1_lp)
+    original_model_max = DietModel(the_data)
+    original_model_min = DietModel(the_data, "min")
+    vege_model_min = VegetarianDietModel(the_data, "min")
+    vege_model_max = VegetarianDietModel(the_data)
+    vegan_model_min = VeganDietModel(the_data, "min")
+    vegan_model_max = VeganDietModel(the_data)
+
+
+    original_lp_max = original_model_max.format_lp()
+    original_lp_min = original_model_min.format_lp()
+    vege_lp_max = vege_model_max.format_lp()
+    vege_lp_min = vege_model_min.format_lp()
+    vegan_lp_max = vegan_model_max.format_lp()
+    vegan_lp_min = vegan_model_min.format_lp()
+
+    # Writing the LP input file into a file
+    write_to_file("original_lp_max.lp", original_lp_max)
+    write_to_file("original_lp_min.lp", original_lp_min)
+    write_to_file("vege_lp_max.lp", vege_lp_max)
+    write_to_file("vege_lp_min.lp", vege_lp_min)
+    write_to_file("vegan_lp_max.lp", vegan_lp_max)
+    write_to_file("vegan_lp_min.lp", vegan_lp_min)
+
+
+
 
 
 if __name__ == "__main__":
