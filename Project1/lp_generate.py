@@ -72,7 +72,6 @@ def write_to_file(filename:str, content: str):
         f.write(content)
 
 def store_lp_files(fileslist):
-
     """
     Takes in list of files, and it will store all the files into the Lp_Folder that is
     represented by the Global Variables.
@@ -279,7 +278,7 @@ def main():
     for calorie in range(1500, 2600, 100):
         d = DietModel(the_data)
         d.set_calorie(calorie)
-        filelist.append((f"variation_calorie_{calorie}", d.format_lp()))
+        filelist.append((f"variation_calorie_{calorie}.lp", d.format_lp()))
     store_lp_files(filelist)
 
 
