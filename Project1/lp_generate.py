@@ -142,7 +142,7 @@ class DietModel:
         row_number = list(range(1, 14)) + [16, 2]
         operators = ["<="]*14 + [">="]
         rhs = [self.__Weight * 0.06 * 1000, 2000, 65, 20, 300, 2400, 300, 50, 20, 2500, 45, 2400, 400, 3, 931]
-        rhs = [I*self.__Scale for I in rhs]
+        rhs = [rhs[0]] + [I*self.__Scale for I in rhs[1:]]
         return [(I, J, K) for I, J, K in zip(row_number, operators, rhs)]
 
     def __getitem__(self, indx):
