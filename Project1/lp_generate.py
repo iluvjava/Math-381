@@ -8,7 +8,11 @@ complete lp problem.
 
 __all__ = ["DietModel", "read_all_data", "try_reducedLP","VegetarianDietModel", "VeganDietModel"]
 from typing import List
+from os import makedirs, path
 FILE_LIST = ["All Meals(fixed).txt", "DM All Food.txt", "Starbucks Food.txt"]
+LP_FOLDER = "all_lp/"
+if not path.exists(LP_FOLDER):
+    makedirs(LP_FOLDER);
 
 def read_csv(filename: str, ignore_1strow = False):
     with open(filename) as f:
@@ -18,6 +22,7 @@ def read_csv(filename: str, ignore_1strow = False):
     if ignore_1strow:
         lines.pop(0)
     return lines
+
 
 def read_all_data(filelist = None):
     """
@@ -39,6 +44,7 @@ def read_all_data(filelist = None):
     for I in merged_Data:
         assert l == len(I), F"Data Corrupted. line :{I}"
     return merged_Data
+
 
 def is_number(s):
     """
@@ -64,6 +70,19 @@ def is_number(s):
 def write_to_file(filename:str, content: str):
     with open(filename, "w+") as f:
         f.write(content)
+
+def store_lp_files(fileslist):
+
+    """
+    Takes in list of files, and it will store all the files into the Lp_Folder that is
+    represented by the Global Variables.
+    :param fileslist:
+        [(filename, content), (filename, content), ... (filename, content)]
+    :return:
+        Nothing
+    """
+    for filename, content in fileslist:
+        write_to_file(LP_FOLDER + filename, content)
 
 
 class DietModel:
@@ -104,9 +123,11 @@ class DietModel:
     def get_food_names(self):
         return self.__FoodNames
 
-    def set_scale(self, scale):
-        assert scale >= 0, "Calorie rescaling factor cannot be less than zero. "
+    def set_calorie(self, calorie):
+        assert calorie >= 0, "Calorie rescaling factor cannot be less than zero. "
+        scale = calorie/2000
         self.__Scale = scale
+
     def set_weigh(self, weight):
         assert weight >= 0, "Subject's weight cannot be less than zero."
         self.__Weight = weight
@@ -170,7 +191,6 @@ class DietModel:
             lp_string += f"{X}>=0;"
         return lp_string + "\n"
 
-
     def format_vartype(self):
         res = "int "
         res += ", ".join(self.__Decision_Variables) + ";"
@@ -229,6 +249,7 @@ def try_reducedLP():
 
 
 def main():
+    # Generate all different kinds of model and their corresponding LP files.
     the_data = read_all_data()
     original_model_max = DietModel(the_data)
     original_model_min = DietModel(the_data, "min")
@@ -237,7 +258,7 @@ def main():
     vegan_model_min = VeganDietModel(the_data, "min")
     vegan_model_max = VeganDietModel(the_data)
 
-
+    # Formatting the lp input strings.
     original_lp_max = original_model_max.format_lp()
     original_lp_min = original_model_min.format_lp()
     vege_lp_max = vege_model_max.format_lp()
@@ -251,7 +272,16 @@ def main():
     write_to_file("vege_lp_max.lp", vege_lp_max)
     write_to_file("vege_lp_min.lp", vege_lp_min)
     write_to_file("vegan_lp_max.lp", vegan_lp_max)
-    write_to_file("vegan_lp_min.lp", vegan_lp_min)  
+    write_to_file("vegan_lp_min.lp", vegan_lp_min)
+
+    # Generate the LP for varying calorie in takes, but with the original model.
+    filelist = []
+    for calorie in range(1500, 2600, 100):
+        d = DietModel(the_data)
+        d.set_calorie(calorie)
+        filelist.append((f"variation_calorie_{calorie}", d.format_lp()))
+    store_lp_files(filelist)
+
 
 if __name__ == "__main__":
     main()
