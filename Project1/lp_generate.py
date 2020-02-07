@@ -71,6 +71,7 @@ def write_to_file(filename:str, content: str):
     with open(filename, "w+") as f:
         f.write(content)
 
+
 def store_lp_files(fileslist):
     """
     Takes in list of files, and it will store all the files into the Lp_Folder that is
@@ -135,6 +136,13 @@ class DietModel:
         """
         This is a method that is created for the convenience and robustness for generating the constraints
         for the problem.
+        An intermediate data structure to represents the constraints.
+        * The data operations is write into a list of tuples where each tuple has 3 elements in it.
+        * I: The row number of the food matrix.
+        * operator: A string, it's either "<=", "=" or ">="
+        * rhs: A number that is going to appended to the right had side of the constratint.
+
+        The list of tuples is then interpreted by the format_constraint function.
         :return:
             (I: Row number, operator, rhs)
         """
@@ -168,6 +176,17 @@ class DietModel:
         return res + "\n"
 
     def format_constraints(self):
+        """
+        This function interprets the output of the markup_constraints function.
+        It also creates all non-negativity constraints for all the decision variables.
+        * For each of the tuple in the list.
+            1. Take out the row from the matrix and maps the index of the variables to its corresponding
+            non-negative coefficients.
+            2. format the left hand side of the constraint using the non-negative coefficients.
+            3. For mat the operator and the right hand side of the constraint.
+        :return:
+            A string that is all the constraints in the LP file.
+        """
         w = self.food_matrix_width()
         constraints = []
         for I, J, K in self.markup_constraints():
@@ -191,11 +210,21 @@ class DietModel:
         return lp_string + "\n"
 
     def format_vartype(self):
+        """
+        format all the variable types for the decision variable.
+        it sets all decision variables to non-negative because one cannot by negative food items.
+        :return:
+        """
         res = "int "
         res += ", ".join(self.__Decision_Variables) + ";"
         return res + "\n"
 
     def format_lp(self):
+        """
+        This function is the final function that outputs all the constraints string for the LP_solver.
+        :return:
+            A string.
+        """
         output_LP = "//This is the obj fxn for diet problem:\n"
         output_LP += self.format_objfxn()
         output_LP += "//These are the constraints:\n"
@@ -205,9 +234,20 @@ class DietModel:
         return output_LP
 
     def get_food_list(self, indx_list):
+        """
+            A helper function for getting thenames of the food.
+        :param indx_list:
+        :return:
+        """
         return [self.__FoodNames[I] for I in indx_list]
 
     def get_food_name(self, var_indx: int):
+        """
+        A helper function for getting the names of the food given the index of the decision variables.
+        :param var_indx:
+        :return:
+            string, the name of the food.
+        """
         return self.__FoodNames[var_indx]
 
 
@@ -223,6 +263,7 @@ class VegetarianDietModel(DietModel):
         res = super(VegetarianDietModel, self).markup_constraints()
         res.append((15, "<=", 0))
         return res
+
 
 class VeganDietModel(DietModel):
     """
