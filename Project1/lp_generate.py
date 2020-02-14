@@ -6,7 +6,7 @@ This file contains all the codes that read the data collected from the model; an
 complete lp problem.
 """
 
-__all__ = ["DietModel", "read_all_data", "try_reducedLP","VegetarianDietModel", "VeganDietModel"]
+__all__ = ["DietModel", "read_all_data", "try_reducedLP","VegetarianDietModel", "VeganDietModel", "BrokenModel"]
 from typing import List
 from os import makedirs, path
 FILE_LIST = ["All Meals(fixed).txt", "DM All Food.txt", "Starbucks Food.txt"]
@@ -275,6 +275,14 @@ class VeganDietModel(DietModel):
     def markup_constraints(self):
         res = super(VeganDietModel, self).markup_constraints()
         res.append((14, "<=", 0))
+        return res
+
+class BrokenModel(DietModel):
+    def __init__(self, data, obj = "max"):
+        super(BrokenModel, self).__init__(data, obj)
+    def markup_constraints(self):
+        res = super(BrokenModel, self).markup_constraints()
+        res.append((0, "<=", 500/7))
         return res
 
 
